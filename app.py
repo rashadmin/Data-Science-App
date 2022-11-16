@@ -36,13 +36,13 @@ if select_file == 'Upload DataSet':
 elif select_file == 'Pick Available DataSet':
     file = st.selectbox('Select DataSet', options = ['Crash Data','Real Estate Valuation','Placement Data','Student Score'] )
     if file =='Crash Data':
-        df = pd.read_csv('data/Crash_Data.csv')
+        df = pd.read_csv('data/Crash_Data.csv', low_memory=False)
     elif file == 'Placement Data':
-        df = pd.read_csv('data/Placement_Data_Full_Class.csv')
+        df = pd.read_csv('data/Placement_Data_Full_Class.csv', low_memory=False)
     elif file == 'Real Estate Valuation':
-        df = pd.read_csv('data/Real estate valuation data set.csv')
+        df = pd.read_csv('data/Real estate valuation data set.csv', low_memory=False)
     else:
-        df = pd.read_csv('data/student-mat.csv',delimiter=';')
+        df = pd.read_csv('data/student-mat.csv',delimiter=';',low_memory=False)
 else:
     st.stop()
 st.dataframe(df.head())

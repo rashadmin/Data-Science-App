@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 def import_file(filename,delimiter):
-    df = pd.read_csv(filename,delimiter=delimiter)
+    df = pd.read_csv(filename,delimiter=delimiter,low_memory=False)
     return df
 #@st.cache(suppress_st_warning=True)
 def info(df,include=None):
