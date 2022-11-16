@@ -56,7 +56,7 @@ if show_items=='Show DataFrame Information' :
         st.subheader('DataFrame Information')
         st.write(f'The Shape of the DataFrame is {shape}')
         if len(columns) <=0:
-            st.write('There are No Columns with Missing Values in this DataFrame')
+            st.warning('There are No Columns with Missing Values in this DataFrame')
         else:
             with left_col:
                 st.write('The Columns of the DataFrame with Missing Values are:')
