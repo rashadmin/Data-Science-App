@@ -29,9 +29,15 @@ def nvn_relationship_plot(df,dis_1,dis_2,num_col_1_plot,num_col_2_plot):
         fig = px.scatter(data_frame=df,x=num_col_1_plot,y=num_col_2_plot)
         st.plotly_chart(fig)
     if dis_1 and not dis_2:
-        data = df.groupby(num_col_1_plot)[num_col_2_plot].mean()
+        try:
+            data = df.groupby(num_col_1_plot)[num_col_2_plot].mean()
+        except TypeError:
+            st.info(f'Check Data Type for {num_col_2_plot}')
     elif dis_2 and not dis_1:
-        data = df.groupby(num_col_2_plot)[num_col_1_plot].mean()
+        try:
+            data = df.groupby(num_col_2_plot)[num_col_1_plot].mean()
+        except TypeError:
+            st.info(f'Check Data Type for {num_col_1_plot}')
     elif dis_1 and  dis_2:
         data = df.groupby(num_col_2_plot)[num_col_1_plot].value_counts().unstack()
     if dis_1 or dis_2:
@@ -48,12 +54,16 @@ def nvc_relationship_plot(df,dis_1,n_col_1_plot,c_col_1_plot,num_miss=False,cat_
     if dis_1:
         data = df.groupby(c_col_1_plot)[n_col_1_plot].value_counts().unstack()
     else:
-        data = df.groupby(c_col_1_plot)[n_col_1_plot].mean()
-
-    with col_41[3]:
-        st.subheader(f'A Bar Plot of the Relationship Between "{n_col_1_plot}" and "{c_col_1_plot}"')
-        fig = px.bar(data,width=800,barmode='group')
-        st.plotly_chart(fig)
+        try:
+            data = df.groupby(c_col_1_plot)[n_col_1_plot].mean()
+            with col_41[3]:
+                st.subheader(f'A Bar Plot of the Relationship Between "{n_col_1_plot}" and "{c_col_1_plot}"')
+                fig = px.bar(data,width=800,barmode='group')
+                st.plotly_chart(fig)
+        except TypeError:
+            with col_41[3]:
+                st.info(f'Check Data Type for {n_col_1_plot} to plot the Barplot')
+   
         
 def cvc_relationship_plot(df,cat_col_1_plot,cat_col_2_plot):
     col_42 = st.columns([5,35,5,45,5])
@@ -77,9 +87,13 @@ def feat_target_plot(df,num_col_tar_plot,cat_col_tar_plot,task_plot,target,num_m
                 type_plot = st.radio('',options=['box_plot','bar_plot'],horizontal=True)
                 if type_plot== 'bar_plot':
                     st.subheader(f'A Bar Plot of the Relationship Between "{cat_col_tar_plot}" and Target "{target}"')
-                    data = df.groupby(cat_col_tar_plot)[target].mean()
-                    cat_fig = px.bar(data)
-                    st.plotly_chart(cat_fig)
+                    try:
+                        data = df.groupby(cat_col_tar_plot)[target].mean()
+                        cat_fig = px.bar(data)
+                        st.plotly_chart(cat_fig)
+                    except TypeError:
+                        st.info(f'Check Data Type for Target-{target}')
+                    
                 else:
                     st.subheader(f'A Box Plot of the Relationship Between "{cat_col_tar_plot}" and "{target}"')
                     fig = px.box(data_frame=df,x=cat_col_tar_plot,y=target,orientation='h')

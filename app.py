@@ -12,25 +12,24 @@ from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
 import plotly.express as px
 from plot_chart import plot_discrete_ordinal,feat_target_plot,target_plot,plot_continuous,nvn_relationship_plot,nvc_relationship_plot,cvc_relationship_plot
 st.set_page_config(layout='wide')
-cols = st.columns([20,60,20])
+cols = st.columns([10,80,10])
 with cols[1]:
     st.title('DATA AGNOSTIC DATA SCIENCE APP')
 st.subheader('Select DataSet')
-select_file = st.radio('',options=[None,'Pick Available DataSet','Upload DataSet'],horizontal=True,label_visibility='collapsed')
+select_file = st.radio('Select',options=[None,'Pick Available DataSet','Upload DataSet'],horizontal=True,label_visibility='collapsed')
 if select_file == 'Upload DataSet':
-    file = st.file_uploader('Upload Your File')
+    file = st.file_uploader('Upload Your File (in csv format)')
     if file is not None:
-        file_ext = st.radio('Select File Extension',options = [None,'Csv','Xlsx'],horizontal=True)
-        if file_ext is None:
-            st.stop()
-        elif file_ext=='Csv':
-            delimiter = st.radio('Select Delimiter',options=[None,';',','],horizontal=True)
+        file_ext = (file.name).split('.')[1]
+        if file_ext == 'csv':
+            delimiter = st.radio('Select Delimiter',options=[None,';',',',''],horizontal=True)
             if delimiter is None:
                 st.stop()
             else:
                 df = import_file(file,delimiter=delimiter)
         else:
-            pass
+            st.warning(f'File Upload accepts only csv file extension and not {file_ext} extensions, Check File Extension and upload again')
+            st.stop()
     else:
         st.stop()
 elif select_file == 'Pick Available DataSet':
@@ -47,7 +46,7 @@ else:
     st.stop()
 st.dataframe(df.head())
 
-show_items = st.radio('',options=['Show DataFrame Information','Exploratory Data Analysis','Data Preprocessing and Modelling'],index=0,horizontal=True)
+show_items = st.radio('Show items',options=['Show DataFrame Information','Exploratory Data Analysis','Data Preprocessing and Modelling'],index=0,horizontal=True,label_visibility='collapsed')
 shape,describe,columns,high_columns = info(df)
 if show_items=='Show DataFrame Information' :
     left_col,right_col = st.columns([50,50])
@@ -293,25 +292,28 @@ if show_items == 'Data Preprocessing and Modelling':
             st.write('Fill Rows With Missing Values with Most Frequent')
             X_train,X_test = mode_fill(columns, X_train, X_test)
             
-        st.write(f'We have {len(X_train)} rows Left!')
-        st.write(f'We have {len(y_train)} rows Left!')
+        
+        st.info(f'We have {len(y_train)} rows Left!')
         st.dataframe(X_train)
         if np.any(X_train.isnull()) and np.any(X_test.isnull()):
             st.stop()
         
     with transforming:
         col_16,col_17,col_18,col_19 = st.columns([10,40,40,10])
+        col_x = st.columns([1,98,1])
         column = X_train.columns
         with col_17:
             X_train,X_test = ohe_transform(column, X_train, X_test)
         with col_18:
             X_train,X_test = ord_transform(column, X_train, X_test)
         y_train,y_test = label_transform(task, y_train, y_test)
-        st.dataframe(X_train,width=800)
         with col_19:
             next_page_1 = st.checkbox('Go to Baseline Page')
+        with col_x[1]:
+            st.dataframe(X_train)
         if not next_page_1:
             st.stop()
+        
         
     with set_baseline:
         col_61 = st.columns([80,20])
