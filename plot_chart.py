@@ -1,5 +1,7 @@
 import plotly.express as px
 import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def plot_discrete_ordinal(dis_col_plot,df,key):
     plot_type = st.radio('Select Discrete Plot Type',options=['barplot','pieplot'],horizontal=True,key=key)
@@ -23,11 +25,17 @@ def plot_continuous(cont_col_plot,df):
     return fig
 
 def nvn_relationship_plot(df,dis_1,dis_2,num_col_1_plot,num_col_2_plot):
-    col_40 = st.columns([5,35,5,45,5])
-    with col_40[1]:
-        st.subheader(f'A Scatter Plot of the Relationship Between {num_col_1_plot} and {num_col_2_plot}')
-        fig = px.scatter(data_frame=df,x=num_col_1_plot,y=num_col_2_plot)
-        st.plotly_chart(fig)
+    col_40 = st.columns([5,35,15,35,5])
+    if not dis_1 and not dis_2:
+        with col_40[1]:
+            st.subheader(f'A Scatter Plot of the Relationship Between {num_col_1_plot} and {num_col_2_plot}')
+            fig = px.scatter(data_frame=df,x=num_col_1_plot,y=num_col_2_plot)
+            st.plotly_chart(fig)
+    with col_40[3]:
+        st.subheader(f'A HeatMap Plot of the Correlation Between {num_col_1_plot} and {num_col_2_plot}')
+        fig,ax = plt.subplots()
+        ax = sns.heatmap(df[[num_col_1_plot,num_col_2_plot]].corr(),annot=True)
+        st.pyplot(fig)
     if dis_1 and not dis_2:
         try:
             data = df.groupby(num_col_1_plot)[num_col_2_plot].mean()
@@ -41,7 +49,7 @@ def nvn_relationship_plot(df,dis_1,dis_2,num_col_1_plot,num_col_2_plot):
     elif dis_1 and  dis_2:
         data = df.groupby(num_col_2_plot)[num_col_1_plot].value_counts().unstack()
     if dis_1 or dis_2:
-        with col_40[3]:
+        with col_40[1]:
             st.subheader(f'A Bar Plot of the Relationship Between "{num_col_1_plot}" and "{num_col_2_plot}"')
             fig = px.bar(data,width=800)
             st.plotly_chart(fig)

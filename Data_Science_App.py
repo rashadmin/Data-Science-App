@@ -15,6 +15,15 @@ st.set_page_config(layout='wide')
 cols = st.columns([10,80,10])
 with cols[1]:
     st.title('DATA AGNOSTIC DATA SCIENCE APP')
+colsx = st.columns([10,10,10,10,10,20])
+with colsx[1]:
+    st.markdown('[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rashadmin/Data-Science-App.git)')
+with colsx[2]:
+    st.markdown('[![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/abdulrasheed-ameen-27829822a)')
+with colsx[3]:
+    st.markdown('[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.link/mn69yb)')
+with colsx[4]:
+    st.markdown('[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:abdul.a.rasheed2021@gmail.com)')
 st.subheader('Select DataSet')
 select_file = st.radio('Select',options=[None,'Pick Available DataSet','Upload DataSet'],horizontal=True,label_visibility='collapsed')
 if select_file == 'Upload DataSet':
