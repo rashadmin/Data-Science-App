@@ -113,40 +113,41 @@ if show_items == 'Exploratory Data Analysis':
             target = st.selectbox('Select Target Features',options=col_remain_2 )
         with col_50[6]:
             next_pg = st.checkbox('DONE')
-        if not next_pg:
+        if not next_pg and len(cat_col):
             st.stop()
     with numerical:
         #wer check for all numerical column and no object column
-        col_51 = st.columns([2,30,3,30,3,30,2]) 
-        with col_51[1]:
-            st.write('Select Discrete Features')
-            dis_col = st.multiselect('Select Discrete Features',options=num_col)
-        with col_51[3]:
-             st.write('Select Continuous Features')
-             pre_cont_col = df[num_col].drop(dis_col,axis=1).columns
-             cont_col = st.multiselect('Select Continuous Features',options=pre_cont_col)
-        with col_51[5]:
-            st.write('Select Feature to Ignore')
-
-            pre_ignore_col = df[num_col].drop(cont_col+dis_col,axis=1).columns
-            ignore = st.multiselect('Select Numerical Features to Ignore',options=pre_ignore_col )
-        if len(dis_col)+len(cont_col)+len(ignore) == len(num_col):
-            col_52 = st.columns([1,35,23,35,5]) 
-            with col_52[1]:
-                if len(dis_col) >0:
-                    key = 'discrete'
-                    st.write('Select Discrete Features to Plot')
-                    dis_col_plot = st.selectbox('Select Discrete Features to Plot',options=dis_col)
-                    fig = plot_discrete_ordinal(dis_col_plot, df,key)
-                    with col_52[1]:
-                        st.plotly_chart(fig)
-            with col_52[3]:
-                if len(cont_col) >0:
-                     st.write('Select Continuous Features to Plot')
-                     cont_col_plot = st.selectbox('Select Continuous Features to Plot',options=cont_col)
-                     cont_fig = plot_continuous(cont_col_plot, df)
-                     with col_52[3]:
-                         st.plotly_chart(cont_fig)
+        if len(num_col)>0:
+            col_51 = st.columns([2,30,3,30,3,30,2]) 
+            with col_51[1]:
+                st.write('Select Discrete Features')
+                dis_col = st.multiselect('Select Discrete Features',options=num_col)
+            with col_51[3]:
+                 st.write('Select Continuous Features')
+                 pre_cont_col = df[num_col].drop(dis_col,axis=1).columns
+                 cont_col = st.multiselect('Select Continuous Features',options=pre_cont_col)
+            with col_51[5]:
+                st.write('Select Feature to Ignore')
+    
+                pre_ignore_col = df[num_col].drop(cont_col+dis_col,axis=1).columns
+                ignore = st.multiselect('Select Numerical Features to Ignore',options=pre_ignore_col )
+            if len(dis_col)+len(cont_col)+len(ignore) == len(num_col):
+                col_52 = st.columns([1,35,23,35,5]) 
+                with col_52[1]:
+                    if len(dis_col) >0:
+                        key = 'discrete'
+                        st.write('Select Discrete Features to Plot')
+                        dis_col_plot = st.selectbox('Select Discrete Features to Plot',options=dis_col)
+                        fig = plot_discrete_ordinal(dis_col_plot, df,key)
+                        with col_52[1]:
+                            st.plotly_chart(fig)
+                with col_52[3]:
+                    if len(cont_col) >0:
+                         st.write('Select Continuous Features to Plot')
+                         cont_col_plot = st.selectbox('Select Continuous Features to Plot',options=cont_col)
+                         cont_fig = plot_continuous(cont_col_plot, df)
+                         with col_52[3]:
+                             st.plotly_chart(cont_fig)
     if len(cat_col) >0:
         with categorical:
             col_53 = st.columns([2,30,3,30,3,30,2]) 
@@ -155,12 +156,12 @@ if show_items == 'Exploratory Data Analysis':
                 nom_col = st.multiselect('Select Nominal Features',options=cat_col)
             with col_53[3]:
                  st.write('Select Ordinal Features')
-                 pre_ord_col = df[cat_col].drop(nom_col,axis=1).columns
+                 pre_ord_col = df[cat_col].drop(columns=nom_col).columns
                  ord_col = st.multiselect('Select Ordinal Features',options=pre_ord_col)
             with col_53[5]:
                 st.write('Select Feature to Ignore')
     
-                pre_ignore_cat_col = df[cat_col].drop(nom_col+ord_col,axis=1).columns
+                pre_ignore_cat_col = df[cat_col].drop(columns=nom_col+ord_col).columns
                 cat_ignore = st.multiselect('Select Categorical Features to Ignore',options=pre_ignore_cat_col )
             if len(nom_col)+len(ord_col)+len(cat_ignore) == len(cat_col):
                 col_54 = st.columns([1,35,23,35,5]) 
@@ -186,17 +187,21 @@ if show_items == 'Exploratory Data Analysis':
             task_plot = st.radio('What Machine Learning Task', options=['Regression','Classification'],horizontal=True)
         target_plot(task_plot, df, target)
     with nvn_relationship:
-        col_56 = st.columns([5,10,30,30,20]) 
-        with col_56[1]:
-            dis_1 = st.checkbox('Discrete?',help='Check Discrete if First Feature is Discrete')
-        with col_56[2]:
-            num_col_1_plot = st.selectbox('Select First Numerical Features to Plot',options=num_col)
-        with col_56[3]:
-            num_col_remain = df[num_col].drop(num_col_1_plot,axis=1).columns
-            num_col_2_plot = st.selectbox('Select Second Numerical Features to Plot',options=num_col_remain)
-        with col_56[4]:
-            dis_2 = st.checkbox('Discrete?',help='Check Discrete if Second Feature is Discrete')
-        nvn_relationship_plot(df,dis_1,dis_2,num_col_1_plot,num_col_2_plot)
+        if len(num_col)>1:
+            col_56 = st.columns([5,10,30,30,20]) 
+            with col_56[1]:
+                dis_1 = st.checkbox('Discrete?',help='Check Discrete if First Feature is Discrete')
+            with col_56[2]:
+                num_col_1_plot = st.selectbox('Select First Numerical Features to Plot',options=num_col)
+            with col_56[3]:
+                num_col_remain = df[num_col].drop(columns=num_col_1_plot).columns
+                num_col_2_plot = st.selectbox('Select Second Numerical Features to Plot',options=num_col_remain)
+            with col_56[4]:
+                dis_2 = st.checkbox('Discrete?',help='Check Discrete if Second Feature is Discrete')
+            
+            nvn_relationship_plot(df,dis_1,dis_2,num_col_1_plot,num_col_2_plot)
+        else:
+            st.info(f'Relationship cannot be plotted with {len(num_col)} Variable')
         
         ## q-q plot
         ## scatter plot
