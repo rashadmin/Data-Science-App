@@ -217,7 +217,7 @@ if show_items == 'Exploratory Data Analysis':
             #bar plot
             nvc_relationship_plot(df,dis_1,n_col_1_plot,c_col_1_plot)
             #box plot
-    if len(cat_col) >0:
+    if len(cat_col) >1:
         with cvc_relationship:
             col_56 = st.columns([5,10,30,30,20]) 
             with col_56[2]:
